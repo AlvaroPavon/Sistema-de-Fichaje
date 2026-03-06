@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Gestión de Empleados</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
         .cabecera { display: flex; justify-content: space-between; align-items: center; background: #2c3e50; color: white; padding: 15px 30px; border-radius: 8px; margin-bottom: 20px;}
         .btn-accion { padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-weight: bold; font-size: 14px;}
         .btn-azul { background: #3498db; }
@@ -15,8 +15,14 @@
         th { background-color: #34495e; color: white; }
         tr:hover { background-color: #f9f9f9; }
         .id-badge { background: #ecf0f1; padding: 5px 10px; border-radius: 4px; font-family: monospace; font-weight: bold; color: #2c3e50; }
-        .btn-eliminar { color: #e74c3c; text-decoration: none; font-weight: bold; }
-        .btn-eliminar:hover { text-decoration: underline; }
+        
+        .btn-eliminar { color: #e74c3c; text-decoration: none; font-weight: bold; padding: 5px 10px; border: 1px solid #e74c3c; border-radius: 4px; transition: 0.2s;}
+        .btn-eliminar:hover { background-color: #e74c3c; color: white; }
+        
+        .btn-ficha { color: #3498db; text-decoration: none; font-weight: bold; padding: 5px 10px; border: 1px solid #3498db; border-radius: 4px; margin-right: 10px; transition: 0.2s;}
+        .btn-ficha:hover { background-color: #3498db; color: white; }
+        
+        .acciones-contenedor { display: flex; align-items: center; }
     </style>
 </head>
 <body>
@@ -57,17 +63,19 @@
                 <td><span class="id-badge">{{ emp[0] }}</span></td>
                 <td>{{ emp[1] }}</td>
                 <td>{{ emp[2] }}</td>
-                <td>
+                <td class="acciones-contenedor">
+                    <a href="/empleado/{{ emp[0] }}" class="btn-ficha">Ver Ficha</a>
+                    
                     <a href="/eliminar_empleado/{{ emp[0] }}" 
                        class="btn-eliminar"
-                       onclick="return confirm('¿Estás seguro de que deseas eliminar a {{ emp[1] }}? Esto no borrará sus fichajes antiguos.')">
-                       Eliminar
+                       onclick="return confirm('¿Estás seguro de que deseas dar de baja a {{ emp[1] }}? Sus registros se mantendrán en el historial.')">
+                       Dar de baja
                     </a>
                 </td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="4" style="text-align: center; color: #95a5a6;">No hay empleados registrados en el sistema.</td>
+                <td colspan="4" style="text-align: center; color: #95a5a6; padding: 30px;">No hay empleados registrados y activos en el sistema.</td>
             </tr>
             {% endfor %}
         </tbody>
