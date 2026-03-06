@@ -1,0 +1,11 @@
+services:
+  fichador_app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      # Esto es magia: enlaza tu carpeta de Windows con la del contenedor.
+      # ¡Si cambias el código en Windows, se actualiza en Docker al instante!
+      - .:/app
+    environment:
+      - FLASK_ENV=development

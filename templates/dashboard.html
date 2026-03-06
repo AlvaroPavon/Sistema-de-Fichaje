@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Fichajes</title>
+    <style>
+        body { font-family: Arial; background-color: #f9f9f9; margin: 0; padding: 20px; }
+        .cabecera { display: flex; justify-content: space-between; align-items: center; background: #2c3e50; color: white; padding: 15px 30px; border-radius: 8px; margin-bottom: 20px;}
+        .btn-salir { background: #e74c3c; color: white; text-decoration: none; padding: 10px 15px; border-radius: 5px; font-weight: bold;}
+        .caja-herramientas { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn-accion { padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; font-size: 14px; font-weight: bold;}
+        .btn-verde { background: #27ae60; }
+        .btn-azul { background: #3498db; }
+        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #34495e; color: white; }
+        tr:hover { background-color: #f1f1f1; }
+    </style>
+</head>
+<body>
+    <div class="cabecera">
+        <h2>Historial de Fichajes</h2>
+        <div>
+            <a href="/empleados" class="btn-accion btn-azul" style="margin-right: 15px;">Gestión de Empleados</a>
+            <a href="/logout" class="btn-salir">Cerrar Sesión</a>
+        </div>
+    </div>
+
+    <div class="caja-herramientas">
+        <div>
+            <h3 style="margin-top: 0; margin-bottom: 10px; font-size: 16px;">Subir datos antiguos (.xlsx)</h3>
+            <form action="/importar" method="POST" enctype="multipart/form-data" style="display: flex; gap: 10px; align-items: center;">
+                <input type="file" name="archivo_excel" accept=".xlsx" required style="font-size: 14px;">
+                <button type="submit" class="btn-accion btn-verde">Importar Excel</button>
+            </form>
+        </div>
+        <div style="text-align: right;">
+            <h3 style="margin-top: 0; margin-bottom: 10px; font-size: 16px;">Descargar registros</h3>
+            <a href="/exportar" class="btn-accion btn-azul">Descargar Excel</a>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Fecha y Hora</th>
+                <th>Estado del Dispositivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fichaje in fichajes %}
+            <tr>
+                <td>{{ fichaje[0] }}</td>
+                <td>{{ fichaje[1] if fichaje[1] else 'Desconocido' }}</td>
+                <td>{{ fichaje[2] if fichaje[2] else 'Desconocido' }}</td>
+                <td>{{ fichaje[3] }}</td>
+                <td>{{ fichaje[4] }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center;">No hay fichajes registrados todavía.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

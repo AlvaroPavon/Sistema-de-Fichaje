@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Empleados</title>
+    <style>
+        body { font-family: Arial; background-color: #f9f9f9; margin: 0; padding: 20px; }
+        .cabecera { display: flex; justify-content: space-between; align-items: center; background: #2c3e50; color: white; padding: 15px 30px; border-radius: 8px; margin-bottom: 20px;}
+        .btn-accion { padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-weight: bold;}
+        .btn-azul { background: #3498db; }
+        .formulario-caja { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input { padding: 10px; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px;}
+        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #34495e; color: white; }
+    </style>
+</head>
+<body>
+    <div class="cabecera">
+        <h2>Gestión de Empleados</h2>
+        <div>
+            <a href="/dashboard" class="btn-accion btn-azul">Volver al Dashboard</a>
+        </div>
+    </div>
+
+    <div class="formulario-caja">
+        <h3>Registrar Nuevo Empleado</h3>
+        {% if error %}<p style="color:red;">{{ error }}</p>{% endif %}
+        {% if mensaje %}<p style="color:green;">{{ mensaje }}</p>{% endif %}
+        
+        <form method="POST">
+            <input type="text" name="id_empleado" placeholder="ID (Ej: 1234)" required>
+            <input type="text" name="nombre" placeholder="Nombre" required>
+            <input type="text" name="apellidos" placeholder="Apellidos" required>
+            <button type="submit" class="btn-accion" style="background: #27ae60;">Añadir Empleado</button>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in empleados %}
+            <tr>
+                <td>{{ emp[0] }}</td>
+                <td>{{ emp[1] }}</td>
+                <td>{{ emp[2] }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3" style="text-align: center;">No hay empleados registrados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
