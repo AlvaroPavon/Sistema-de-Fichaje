@@ -3,60 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal de Fichaje Kiosco</title>
+    <title>Terminal de Fichaje Oficial</title>
     <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #2c3e50; margin: 0; }
-        .tarjeta { background-color: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); text-align: center; width: 90%; max-width: 400px; }
-        h1 { color: #333; margin-bottom: 5px;}
-        input { width: 100%; padding: 15px; margin: 20px 0; font-size: 30px; text-align: center; border: 2px solid #bdc3c7; border-radius: 8px; box-sizing: border-box; }
-        button { background-color: #27ae60; color: white; border: none; padding: 20px; width: 100%; font-size: 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        button:active { background-color: #2ecc71; }
-        #mensaje { margin-top: 20px; font-size: 20px; font-weight: bold; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #2c3e50; margin: 0; }
+        .tarjeta { background-color: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); text-align: center; width: 90%; max-width: 450px; border-top: 8px solid #27ae60; }
+        h1 { color: #2c3e50; margin-bottom: 10px; font-size: 28px; }
+        p { color: #7f8c8d; margin-bottom: 25px; }
+        input { width: 100%; padding: 18px; margin-bottom: 20px; font-size: 32px; text-align: center; border: 2px solid #ecf0f1; border-radius: 12px; box-sizing: border-box; background-color: #f9f9f9; color: #2c3e50; font-weight: bold; }
+        input:focus { outline: none; border-color: #3498db; background-color: white; }
+        button { background-color: #27ae60; color: white; border: none; padding: 20px; width: 100%; font-size: 24px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: transform 0.1s, background-color 0.2s; }
+        button:active { transform: scale(0.98); background-color: #219150; }
+        #mensaje { margin-top: 25px; font-size: 20px; font-weight: bold; min-height: 1.2em; }
+        .error { color: #e74c3c; }
+        .exito { color: #27ae60; }
     </style>
 </head>
 <body>
+
     <div class="tarjeta">
-        <h1>Fichaje</h1>
-        <p>Introduce tu ID</p>
-        <input type="number" id="id_empleado" placeholder="Ej: 1234" autocomplete="off">
-        <button onclick="enviarFichaje()">FICHAR</button>
+        <h1>Control Horario</h1>
+        <p>Por favor, introduce tu ID de empleado</p>
+        
+        <input type="text" id="id_empleado" placeholder="Ej: JP123" autocomplete="off" maxlength="10">
+        <button onclick="enviarFichaje()">REGISTRAR FICHAJE</button>
+
         <div id="mensaje"></div>
     </div>
 
     <script>
+        // Imagen del flujo de validación: 
+
         function enviarFichaje() {
-            const idEmpleado = document.getElementById('id_empleado').value;
+            const inputID = document.getElementById('id_empleado');
             const divMensaje = document.getElementById('mensaje');
             const tokenDispositivo = localStorage.getItem('token_seguridad');
 
-            if (!idEmpleado) {
-                mostrarMensaje("Por favor, introduce tu ID.", "red");
+            if (!inputID.value.trim()) {
+                mostrarMensaje("Introduce tu ID para fichar.", "error");
                 return;
             }
 
+            // Enviamos el ID y el Token secreto al servidor
             fetch('/fichar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_empleado: idEmpleado, token: tokenDispositivo })
+                body: JSON.stringify({ 
+                    id_empleado: inputID.value,
+                    token: tokenDispositivo 
+                })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    mostrarMensaje(data.error, "red");
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(res => {
+                if (res.status === 200) {
+                    // Éxito: El servidor nos devuelve el nombre del empleado
+                    mostrarMensaje(res.body.mensaje, "exito");
+                    inputID.value = ''; // Limpiamos el campo
                 } else {
-                    mostrarMensaje(data.mensaje, "green");
-                    setTimeout(() => document.getElementById('id_empleado').value = '', 3000);
+                    // Errores: ID no existe (404) o Dispositivo no autorizado (403)
+                    mostrarMensaje(res.body.error, "error");
                 }
             })
-            .catch(() => mostrarMensaje("Error de conexión.", "red"));
+            .catch(error => {
+                mostrarMensaje("Error crítico: El servidor no responde.", "error");
+            });
         }
 
-        function mostrarMensaje(texto, color) {
+        function mostrarMensaje(texto, tipo) {
             const div = document.getElementById('mensaje');
-            div.style.color = color;
+            div.className = tipo;
             div.innerText = texto;
-            if(color === "green") setTimeout(() => div.innerText = '', 3000);
+            
+            // El mensaje desaparece tras 4 segundos
+            setTimeout(() => {
+                div.innerText = '';
+                div.className = '';
+            }, 4000);
         }
+
+        // Permitir usar la tecla 'Enter' para fichar
+        document.getElementById('id_empleado').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                enviarFichaje();
+            }
+        });
     </script>
 </body>
 </html>
